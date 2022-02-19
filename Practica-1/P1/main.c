@@ -23,26 +23,29 @@
 
 // TODO Preguntar se está ben feito declaralas aquí arriba
 // TODO Preguntar se é mellor parsear o formato dos Strings antes ou despois das funcións
-void new(tProductId, tUserId, tProductCategory, tProductPrice, tList);
-void delete(tProductId, tList);
-void bid(tProductId, tUserId, tProductPrice, tList);
-void stats(tList);
-void printProduct(tList);
+void new(tProductId, tUserId, tProductCategory, tProductPrice, tList*);
+void delete(tProductId, tList*);
+void bid(tProductId, tUserId, tProductPrice, tList*);
+void stats(tList*);
+void printProduct(tList*);
 
-void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4) {
+void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList* lista) {
 
+	printf("********************\n");
 	switch (command) {
 		case 'N':
-			printf("Command: %s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+			printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
+			new(param1, param2, strcmp(param3, "book"), strtof(param4, NULL), lista);
 			break;
 		case 'S':
-			printf("Command: %s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+			printf("%s %c\n", commandNumber, command);
+			stats(lista);
 			break;
 		case 'B':
-			printf("Command: %s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+			printf("%s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
 			break;
 		case 'D':
-			printf("Command: %s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+			printf("%s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
 			break;
 		default:
 			break;
@@ -50,6 +53,10 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 }
 
 void readTasks(char *filename) {
+	// TODO Borrar a declaración da lista, non sei se ten que ir aquí
+	tList lista;
+	createEmptyList(&lista);
+
 	FILE *f = NULL;
 	char *commandNumber, *command, *param1, *param2, *param3, *param4;
 	const char delimiters[] = " \n\r";
@@ -67,7 +74,7 @@ void readTasks(char *filename) {
 			param3 = strtok(NULL, delimiters);
 			param4 = strtok(NULL, delimiters);
 
-			processCommand(commandNumber, command[0], param1, param2, param3, param4);
+			processCommand(commandNumber, command[0], param1, param2, param3, param4, &lista);
 		}
 
 		fclose(f);
@@ -100,48 +107,61 @@ int main(int nargs, char **args) {
 
 
 
-void new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList lista) {
+void new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
 	tItemL elemento;
+
+	if(findItem(productId, *lista) != LNULL) {
+		printf("+ Error: New not possible\n");
+		return;
+	}
 
 	strcpy(elemento.productId, productId);
 	strcpy(elemento.seller, userId);
 	elemento.productCategory = productCategory;
 	elemento.productPrice = productPrice;
+	elemento.bidCounter = 0;
 
-	if(insertItem(elemento, LNULL, &lista)) {
-		printf("* New: product %s seller %s category %s price %f", productId, userId, productCategory == 0 ? "book" : "painting", productPrice);
+	if(insertItem(elemento, LNULL, lista)) {
+		printf("* New: product %s seller %s category %s price %.2f\n", productId, userId, productCategory == 0 ? "book" : "painting", productPrice);
 	} else {
-		printf("+ Error: New not possible");
+		printf("+ Error: New not possible\n");
 	}
 }
 
-void delete(tProductId productId, tList lista) {
+void delete(tProductId productId, tList* lista) {
 
 }
 
 // TODO Preguntar se pasa algo polo Spanglish
-void bid(tProductId productId, tUserId userId, tProductPrice productPrice, tList lista) {
+void bid(tProductId productId, tUserId userId, tProductPrice productPrice, tList* lista) {
 
 }
 
-void stats(tList lista) {
+void stats(tList* lista) {
 	tPosL pos;
 	tItemL item;
 	int contadorLibros = 0, contadorPinturas = 0;
 	float sumaPrecioLibros = 0, sumaPrecioPinturas = 0; // TODO Nombre das variables demasiado largo?
 
-	printf("Category  Products    Price  Average\n"); // Cabecera
-	if (!isEmptyList(lista)) {
-		pos = first(lista);
+	if (!isEmptyList(*lista)) {
+		pos = first(*lista);
 		while (pos != LNULL) {
-			item = getItem(pos, lista);
-			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "Book" : "Painting", item.productPrice, item.bidCounter);
-			pos = next(pos, lista);
+			item = getItem(pos, *lista);
+			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
+			if(item.productCategory == 0) { // Libro
+				contadorLibros++;
+				sumaPrecioLibros += item.productPrice;
+			} else { // Pintura
+				contadorPinturas++;
+				sumaPrecioPinturas += item.productPrice;
+			}
+			pos = next(pos, *lista);
 		}
 		// Average
-
-		printf("Book      %8d %8.2f %8.2f\n", contadorLibros, sumaPrecioLibros, sumaPrecioLibros/(float)contadorLibros);
-		printf("Painting  %8d %8.2f %8.2f\n", contadorPinturas, sumaPrecioPinturas, sumaPrecioPinturas/(float)contadorPinturas);
+		printf("\nCategory  Products    Price  Average\n"); // Cabecera
+		printf("Book      %8d %8.2f %8.2f\n", contadorLibros, sumaPrecioLibros, contadorLibros == 0 ? 0 : sumaPrecioLibros/(float)contadorLibros);
+		printf("Painting  %8d %8.2f %8.2f\n", contadorPinturas, sumaPrecioPinturas, contadorPinturas == 0 ? 0 : sumaPrecioPinturas/(float)contadorPinturas);
+	} else {
+		printf("+ Error: Stats not possible\n");
 	}
-	printf(" )\n");
 }

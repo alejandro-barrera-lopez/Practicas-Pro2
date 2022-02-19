@@ -1,16 +1,16 @@
 ( )
-(  price 83187735081908423997047780626558615552.00 ~~# price 84574565120967710613955597880491245568.00 )
-( p1 price 100.00 }~# price 0.00 }~# price 0.00 )
-( p1 price 100.00 }~# price 0.00 p5 price 100.00  price 85130303144107766383571752565728083968.00 ¯Qü price -0.00 )
-( p1 price 100.00 p2 price 100.00  price 99761848320.00  price 99761848320.00  price 99761848320.00  price 99761848320.00 )
-( p1 price 100.00 p2 price 100.00  price 99761848320.00  price 99761848320.00  price 99761848320.00 p4 price 100.00  price 0.00 )
+( p3 price 100.00 )
+( p1 price 100.00 p3 price 100.00 )
+( p1 price 100.00 p3 price 100.00 p5 price 100.00 )
+( p1 price 100.00 p2 price 100.00 p3 price 100.00 p5 price 100.00 )
+( p1 price 100.00 p2 price 100.00 p3 price 100.00 p4 price 100.00 p5 price 100.00 )
 p33 Not found
-¯Qü
-¯Qü
-( p1 price 100.00 p2 price 100.00  price 99761848320.00  price 99761848320.00  price 99761848320.00 p4 price 100.00  price 0.00 )
-( p1 price 100.00  price 99761848320.00  price 99761848320.00  price 99761848320.00 p4 price 100.00  price 0.00 )
-( p1 price 100.00  price 99761848320.00  price 99761848320.00  price 99761848320.00  price 0.00 )
-(  price 99761848320.00  price 99761848320.00  price 99761848320.00  price 0.00 )
-(  price 99761848320.00  price 99761848320.00  price 99761848320.00 )
-(  price 99761848320.00  price 99761848320.00 )
-(  price 99761848320.00 p4 price 100.00  price 99761848320.00  price 0.00 )
+p3
+p3
+( p1 price 100.00 p2 price 100.00 p3 price 500.00 p4 price 100.00 p5 price 100.00 )
+( p1 price 100.00 p3 price 500.00 p4 price 100.00 p5 price 100.00 )
+( p1 price 100.00 p3 price 500.00 p5 price 100.00 )
+( p3 price 500.00 p5 price 100.00 )
+( p3 price 500.00 )
+( )
+( p4 price 100.00 )
