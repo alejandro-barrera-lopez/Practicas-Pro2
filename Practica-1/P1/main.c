@@ -42,10 +42,12 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 			stats(lista);
 			break;
 		case 'B':
-			printf("%s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+			printf("%s %c: product %s bidder %s price %s\n", commandNumber, command, param1, param2, param3);
+			bid(param1, param2, strtof(param3, NULL), lista);
 			break;
 		case 'D':
-			printf("%s %c %s %s %s %s\n", commandNumber, command, param1, param2, param3, param4);
+			printf("%s %c: product %s\n", commandNumber, command, param1);
+			delete(param1, lista);
 			break;
 		default:
 			break;
@@ -129,12 +131,43 @@ void new(tProductId productId, tUserId userId, tProductCategory productCategory,
 }
 
 void delete(tProductId productId, tList* lista) {
-
+	// TODO Facer unha funcion categoryToString/getCategoryName?
+	tPosL posicion = findItem(productId, *lista);
+	tItemL producto;
+	if(posicion == LNULL) {
+		printf("+ Error: Delete not possible\n");
+		return;
+	}
+	producto = getItem(posicion, *lista);
+	printf("* Delete: product %s seller %s category %s price %.2f bids %d\n", producto.productId, producto.seller,
+		   producto.productCategory == 0 ? "book" : "painting", producto.productPrice, producto.bidCounter);
+	deleteAtPosition(posicion, lista);
 }
 
 // TODO Preguntar se pasa algo polo Spanglish
-void bid(tProductId productId, tUserId userId, tProductPrice productPrice, tList* lista) {
+void bid(tProductId productId, tUserId bidder, tProductPrice puja, tList* lista) {
+	tPosL posicion = findItem(productId, *lista);
+	tItemL producto;
+	if(posicion == LNULL) { // TODO Poñer posicion != LNULL e deixar os errores para o final? Delete igual
+		printf("+ Error: Bid not possible\n");
+		return;
+	}
+	producto = getItem(posicion, *lista);
+	if(strcmp(producto.seller, bidder) == 0) { // Si el vendedor es el mismo usuario que el bidder
+		printf("+ Error: Bid not possible\n");
+		return;
+	}
+	if(puja <= producto.productPrice) {
+		printf("+ Error: Bid not possible\n");
+		return;
+	}
+	producto.productPrice = puja;
+	producto.bidCounter++;
 
+	updateItem(producto, posicion, lista);
+
+	printf("* Bid: product %s seller %s category %s price %.2f bids %d\n", producto.productId, producto.seller,
+		   producto.productCategory == 0 ? "book" : "painting", producto.productPrice, producto.bidCounter);
 }
 
 void stats(tList* lista) {

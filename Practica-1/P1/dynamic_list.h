@@ -11,16 +11,20 @@
 #define DYNAMIC_LIST_H
 
 #include "types.h"
+#include <stdlib.h> // TODO include aqui ou no .c?
 
 #define LIST_SIZE_LIMIT 25
-#define LNULL -1
+#define LNULL NULL
 
-typedef int tPosL;
+// TODO Volver a facer a lista dinamica e comprobar se esta ben a definicion
+typedef struct tNode* tPosL;
 
-typedef struct {
-	tItemL elemento[LIST_SIZE_LIMIT];
-	tPosL lastPos;
-} tList;
+struct tNode {
+	tItemL data;
+	tPosL next;
+};
+
+typedef tPosL tList;
 
 void createEmptyList (tList*);
 
