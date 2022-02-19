@@ -9,6 +9,8 @@
 
 #include "static_list.h"
 
+// TODO Comentar condicións das funcións
+
 void createEmptyList (tList* lista) {
     lista->lastPos = LNULL;
 }
@@ -42,15 +44,15 @@ bool insertItem (tItemL elemento, tPosL posicion, tList *lista) {
     if(lista->lastPos == LIST_SIZE_LIMIT - 1) {
         return false;
     } else { // TODO Pódome saltar este else?
+        lista->lastPos++;
         if(posicion == LNULL) {
-            lista->elemento[lista->lastPos++] = elemento;
+            lista->elemento[lista->lastPos] = elemento;
         } else {
             for(i = lista->lastPos; i >= posicion + 1; i--) {
-                lista->elemento[i] = lista->elemento[i + 1];
+                lista->elemento[i] = lista->elemento[i - 1];
             }
             lista->elemento[posicion] = elemento;
         }
-        lista->lastPos++;
         return true;
     }
 }
