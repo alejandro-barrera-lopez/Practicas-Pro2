@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# JetBrains project files
+*.idea
+
 # CMake
 cmake-build-*/
 
