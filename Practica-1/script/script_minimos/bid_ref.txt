@@ -48,7 +48,7 @@ Painting         2   270.00   135.00
 09 B: product product2 bidder user2 price 125.00
 * Bid: product product2 seller user1 category painting price 125.00 bids 1
 ********************
-08 S
+10 S
 Product product1 seller user1 category painting price 150.00 bids 0
 Product product2 seller user1 category painting price 125.00 bids 1
 Product product3 seller user2 category book price 20.00 bids 0
@@ -58,10 +58,10 @@ Category  Products    Price  Average
 Book             2    59.50    29.75
 Painting         2   275.00   137.50
 ********************
-09 B: product product1 bidder user2 price 150.00
+11 B: product product1 bidder user2 price 150.00
 + Error: Bid not possible
 ********************
-10 S
+12 S
 Product product1 seller user1 category painting price 150.00 bids 0
 Product product2 seller user1 category painting price 125.00 bids 1
 Product product3 seller user2 category book price 20.00 bids 0

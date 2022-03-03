@@ -4,7 +4,7 @@
  * AUTHOR 1: Alejandro Barrera López LOGIN 1: alejandro.barrera
  * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira LOGIN 2: a.dolzdelcastellar1
  * GROUP: 4.4
- * DATE: ** / ** / **
+ * DATE: 03 / 03 / 22
  */
 
 #ifndef DYNAMIC_LIST_H
@@ -20,8 +20,8 @@
 typedef struct tNode* tPosL;
 
 struct tNode {
-	tItemL data;
-	tPosL next;
+	tItemL dato;
+	tPosL siguiente;
 };
 
 typedef tPosL tList;
@@ -44,6 +44,7 @@ void deleteAtPosition (tPosL, tList*);
 
 tItemL getItem (tPosL, tList);
 
+// TODO updateItem tList con puntero ou sin puntero???
 void updateItem (tItemL, tPosL, tList*);
 
 tPosL findItem (tProductId, tList);

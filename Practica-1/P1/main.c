@@ -21,6 +21,7 @@
 #include "static_list.h"
 #endif
 
+// TODO Preguntar por como comentar
 // TODO Preguntar se está ben feito declaralas aquí arriba
 // TODO Preguntar se é mellor parsear o formato dos Strings antes ou despois das funcións
 void new(tProductId, tUserId, tProductCategory, tProductPrice, tList*);
@@ -33,7 +34,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 
 	printf("********************\n");
 	switch (command) {
-		case 'N':
+		case 'N': // TODO Preguntar que facer se se introduce unha categoria incorrecta. Hai que esperar este caso?
 			printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
 			new(param1, param2, strcmp(param3, "book"), strtof(param4, NULL), lista);
 			break;
@@ -106,9 +107,6 @@ int main(int nargs, char **args) {
 	return 0;
 }
 
-
-
-
 void new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
 	tItemL elemento;
 
@@ -148,7 +146,7 @@ void delete(tProductId productId, tList* lista) {
 void bid(tProductId productId, tUserId bidder, tProductPrice puja, tList* lista) {
 	tPosL posicion = findItem(productId, *lista);
 	tItemL producto;
-	if(posicion == LNULL) { // TODO Poñer posicion != LNULL e deixar os errores para o final? Delete igual
+	if(posicion == LNULL) { // TODO Poñer posicion != LNULL e deixar as precondicions para o final? Delete igual
 		printf("+ Error: Bid not possible\n");
 		return;
 	}
@@ -178,7 +176,7 @@ void stats(tList* lista) {
 
 	if (!isEmptyList(*lista)) {
 		pos = first(*lista);
-		while (pos != LNULL) {
+		while (pos != LNULL) { // TODO Preguntar While ou for
 			item = getItem(pos, *lista);
 			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
 			if(item.productCategory == 0) { // Libro

@@ -4,80 +4,75 @@
  * AUTHOR 1: Alejandro Barrera López LOGIN 1: alejandro.barrera
  * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira LOGIN 2: a.dolzdelcastellar1
  * GROUP: 4.4
- * DATE: ** / ** / **
+ * DATE: 03 / 03 / 22
  */
 
 #include "dynamic_list.h"
 
-void createEmptyList (tList* L) {
-	*L = LNULL;
+void createEmptyList (tList* lista) {
+	*lista = NULL;
 }
 
-bool isEmptyList (tList L) {
-	return L == LNULL;
+bool isEmptyList (tList lista) {
+	return lista == LNULL;
 }
 
-tPosL first (tList L) {
-	return L;
+tPosL first (tList lista) {
+	return lista;
 }
 
-tPosL last (tList L) {
-	tPosL p;
+tPosL last (tList lista) {
+	tPosL posicion = lista;
 
-	for(p = L; p->next != LNULL; p = p->next);
-
-	return p;
+	while (posicion->siguiente != LNULL) {
+		posicion = posicion->siguiente;
+	}
+	return posicion;
 }
 
-tPosL previous (tPosL p, tList L) {
-	tPosL q;
+tPosL next (tPosL posicion, tList lista) {
+	return posicion->siguiente;
+}
 
-	if(p==L)
+tPosL previous (tPosL posicion, tList lista) { // Ben
+	tPosL aux;
+
+	if(posicion == lista) { // Si es la primera posicion devuelve nulo
 		return LNULL;
-	else
-		for(q = L; q->next != p; q = q->next);
+	}
+	// Recorre la lista desde el principio hasta llegar al elemento anterior al dado
+	for(aux = lista; aux->siguiente != posicion; aux = aux->siguiente);
 
-	return q;
+	return aux;
 }
 
-tPosL next (tPosL p, tList L) {
-	return p->next;
+bool createNode (tPosL* posicion) {
+	*posicion = malloc(sizeof(struct tNode));
+	return *posicion != LNULL;
 }
 
+bool insertItem (tItemL producto, tPosL posicion, tList* lista) {
+	tPosL pos1, pos2;
 
-bool createNode(tPosL* p) {
-	*p = malloc(sizeof(struct tNode));
-	return *p != LNULL;
-}
-
-bool insertItem (tItemL d, tPosL p, tList* L) {
-	tPosL q, r;
-
-	if(!createNode(&q))
+	if(!createNode(&pos1)) { // Si la memoria se pudo asignar correctamente
 		return false;
-	else
-	{
-		q->data = d;
-		q->next = LNULL;
+	} else {
+		pos1->dato = producto;
+		pos1->siguiente = LNULL;
 
-		if(*L == LNULL)
-			*L = q;
-		else if (p == LNULL)
-		{
-			for(r = *L; r->next != LNULL; r = r->next);
-			r->next = q;
-		}
-		else if (p == *L)
-		{
-			q->next = p;
-			*L = q;
-		}
-		else
-		{
-			q->data = p->data;
-			p->data = d;
-			q->next = p->next;
-			p->next = q;
+		if(*lista == LNULL) {// Si la lista esta vacia
+			*lista = pos1; // El producto insertado ocupa la primera posicion
+		} else if (posicion == LNULL) { // Si no se especifica posicion, se inserta al final
+			for(pos2 = *lista; pos2->siguiente != LNULL; pos2 = pos2->siguiente);
+			pos2->siguiente = pos1;
+		} else if (pos1 == *lista) {
+			pos1->siguiente = posicion;
+			*lista = pos1;
+		} else {
+			pos1->dato = posicion->dato;
+			posicion->dato = producto;
+			pos1->siguiente = posicion->siguiente;
+			posicion->siguiente = pos1;
 		}
 		return true;
 	}
@@ -85,36 +80,37 @@ bool insertItem (tItemL d, tPosL p, tList* L) {
 
 
 
-void deleteAtPosition(tPosL p, tList* L) {
-	tPosL q;
+void deleteAtPosition (tPosL posicion, tList* lista) {
+	tPosL pos;
 
-	if(p == *L) {
-		*L = (*L)->next;
-	}else if(p->next == LNULL){
-		for(q = *L; q->next != p; q = q->next);
-		q->next = LNULL;
-	}else{
-		q = p->next;
-		p->data = q->data;
-		p->next = q->next;
-		p = q;
+	if(posicion == *lista) {
+		*lista = (*lista)->siguiente;
+	} else if (posicion->siguiente == LNULL) {
+		for(pos = *lista; pos->siguiente != posicion; pos = pos->siguiente);
+		pos->siguiente = LNULL;
+	} else {
+		pos = posicion->siguiente;
+		posicion->dato = pos->dato;
+		posicion->siguiente = pos->siguiente;
+		posicion = pos;
 	}
-	free(p);
+	free(posicion);
 }
 
-tItemL getItem (tPosL p, tList L) {
-	return p->data;
+tItemL getItem (tPosL posicion, tList lista) {
+	return posicion->dato;
 }
 
-void updateItem (tItemL d, tPosL p, tList* L) {
-	p->data = d;
+void updateItem (tItemL producto, tPosL posicion, tList* lista) {
+	posicion->dato = producto;
 }
 
-tPosL findItem (tProductId d, tList L) {
+tPosL findItem (tProductId d, tList L)
+{
 	tPosL p = L;
 
-	while((p!=LNULL)&&strcmp(d, p->data.productId)!=0){
-		p = p->next;
+	while((p!=LNULL)&&strcmp(d, p->dato.productId)!=0){
+		p = p->siguiente;
 	}
 	return p;
 }
