@@ -32,7 +32,7 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 
 	printf("********************\n");
 	switch (command) {
-		case 'N': // TODO Preguntar que facer se se introduce unha categoria incorrecta. Hai que esperar este caso?
+		case 'N': // TODO Preguntar que faced se se introduce unit categoria incorrecta. Hai que esperar este caso?
 			printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
 			// productCategory: 0 -> book
 			//					1 -> painting
@@ -132,7 +132,7 @@ void new(tProductId productId, tUserId userId, tProductCategory productCategory,
 }
 
 void delete(tProductId productId, tList* lista) {
-	// TODO Facer unha funcion categoryToString/getCategoryName?
+	// TODO Faced unha funcion categoryToString/getCategoryName?
 	tPosL posicion = findItem(productId, *lista);
 	tItemL producto;
 	if(posicion == LNULL) {
@@ -170,15 +170,44 @@ void bid(tProductId productId, tUserId bidder, tProductPrice puja, tList* lista)
 		   producto.productCategory == 0 ? "book" : "painting", producto.productPrice, producto.bidCounter);
 }
 
+/*
 void stats(tList* lista) {
 	tPosL pos;
 	tItemL item;
-	// Gardalo en dous arrays en vez de catro variables?
 	int contadorLibros = 0, contadorPinturas = 0;
+	float sumaPrecioLibros = 0, sumaPrecioPinturas = 0; // TODO Nombre das variables demasiado largo?
+
+	if (!isEmptyList(*lista)) {
+		pos = first(*lista);
+		while (pos != LNULL) {
+			item = getItem(pos, *lista);
+			if(item.productCategory == 0) { // Libro
+				contadorLibros++;
+				sumaPrecioLibros += item.productPrice;
+			} else { // Pintura
+				contadorPinturas++;
+				sumaPrecioPinturas += item.productPrice;
+			}
+			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
+
+			pos = next(pos, *lista);
+		}
+		// TODO Deberia de gardar nunha variable a media?
+		// Average
+		printf("\nCategory  Products    Price  Average\n"); // Cabecera
+		printf("Book      %8d %8.2f %8.2f\n", contadorLibros, sumaPrecioLibros, contadorLibros == 0 ? 0 : sumaPrecioLibros/(float)contadorLibros);
+		printf("Painting  %8d %8.2f %8.2f\n", contadorPinturas, sumaPrecioPinturas, contadorPinturas == 0 ? 0 : sumaPrecioPinturas/(float)contadorPinturas);
+	} else {
+		printf("+ Error: Stats not possible\n");
+	}
+}*/ // Stats sin arrays
+
+void stats(tList* lista) {
+	tPosL pos;
+	tItemL item;
 	int contador[2] = {0, 0};
 	// contador[0] -> Contador de libros
 	// contador[1] -> Contador de pinturas
-	float sumaPrecioLibros = 0, sumaPrecioPinturas = 0; // TODO Nombre das variables demasiado largo?
 	float sumaPrecios[2] = {0, 0};
 	// sumaPrecios[0] -> Suma de los precios de los libros
 	// sumaPrecios[1] -> Suma de los precios de las pinturas
@@ -187,24 +216,15 @@ void stats(tList* lista) {
 		pos = first(*lista);
 		while (pos != LNULL) {
 			item = getItem(pos, *lista);
-			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
-			printf("Categoria = %d \n", item.productCategory);
 			contador[item.productCategory]++;
 			sumaPrecios[item.productCategory] += item.productPrice;
-			if(item.productCategory == 0) { // Libro
-				contadorLibros++;
-				sumaPrecioLibros += item.productPrice;
-			} else { // Pintura
-				contadorPinturas++;
-				sumaPrecioPinturas += item.productPrice;
-			}
+			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
+
 			pos = next(pos, *lista);
 		}
 		// TODO Deberia de gardar nunha variable a media?
 		// Average
 		printf("\nCategory  Products    Price  Average\n"); // Cabecera
-//		printf("Book      %8d %8.2f %8.2f\n", contadorLibros, sumaPrecioLibros, contadorLibros == 0 ? 0 : sumaPrecioLibros/(float)contadorLibros);
-//		printf("Painting  %8d %8.2f %8.2f\n", contadorPinturas, sumaPrecioPinturas, contadorPinturas == 0 ? 0 : sumaPrecioPinturas/(float)contadorPinturas);
 		printf("Book      %8d %8.2f %8.2f\n", contador[0], sumaPrecios[0], contador[0] == 0 ? 0 : sumaPrecios[0]/(float)contador[0]);
 		printf("Painting  %8d %8.2f %8.2f\n", contador[1], sumaPrecios[1], contador[1] == 0 ? 0 : sumaPrecios[1]/(float)contador[1]);
 	} else {
