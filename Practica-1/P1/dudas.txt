@@ -1,1 +1,3 @@
-Os #include das listas pódense poñer en types.h para aforrar espacio?
+1. Donde declarar as funcions?
+2. Donde declarar a lista? Fixeno en readTasks()
+3. No new, pode ser que se introduza unha categoria incorrecta?

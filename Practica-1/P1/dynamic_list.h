@@ -16,7 +16,6 @@
 #define LIST_SIZE_LIMIT 25
 #define LNULL NULL
 
-// TODO Volver a facer a lista dinamica e comprobar se esta ben a definicion
 typedef struct tNode* tPosL;
 
 struct tNode {
