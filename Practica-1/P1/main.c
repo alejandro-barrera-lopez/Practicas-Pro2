@@ -22,7 +22,8 @@
 #endif
 
 // TODO Comentar?
-// TODO Preguntar se está ben feito declaralas aquí arriba
+// TODO Pensar modularidad de funcions (Eles dixeron que teñen funcions de duas lineas)
+// TODO En todos os comentarios de funcions, incluir lista como @return?
 void new(tProductId, tUserId, tProductCategory, tProductPrice, tList*);
 void delete(tProductId, tList*);
 void bid(tProductId, tUserId, tProductPrice, tList*);
@@ -32,14 +33,16 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 
 	printf("********************\n");
 	switch (command) {
-		case 'N': // TODO Preguntar que faced se se introduce unit categoria incorrecta. Hai que esperar este caso?
-			printf("%s %c: product %s seller %s category %s price %s\n", commandNumber, command, param1, param2, param3, param4);
+		case 'N':
+			printf("%s %c: product %s seller %s category %s price %s\n",
+				   commandNumber, command, param1, param2, param3, param4);
 			// productCategory: 0 -> book
 			//					1 -> painting
 			// Por lo tanto, la funcion strcmp(param3, "book") tendra las siguientes salidas:
 			//					"book"		-> 0 (book)
 			//					"painting"	-> 1 (painting)
-			new(param1, param2, strcmp(param3, "book") == 0 ? book : painting, strtof(param4, NULL), lista);
+			new(param1, param2, strcmp(param3, "book") == 0 ? book : painting,
+				strtof(param4, NULL), lista);
 			break;
 		case 'S':
 			printf("%s %c\n", commandNumber, command);
@@ -59,7 +62,6 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 }
 
 void readTasks(char *filename) {
-	// TODO Borrar a declaración da lista, non sei se ten que ir aquí
 	tList lista;
 	createEmptyList(&lista);
 
@@ -88,14 +90,13 @@ void readTasks(char *filename) {
 	} else {
 		printf("Cannot open file %s.\n", filename);
 	}
+	// TODO Esta ben colocado?
+	deleteList(&lista);
 }
 
-
+// TODO Hai que comentar precondicions do main?
 int main(int nargs, char **args) {
-
 	char *file_name = "new.txt";
-	tList lista;
-	createEmptyList(&lista);
 
 	if (nargs > 1) {
 		file_name = args[1];
@@ -110,6 +111,15 @@ int main(int nargs, char **args) {
 	return 0;
 }
 
+/**
+ * Realiza la alta de un nuevo producto
+ *
+ * @param productId			ID del producto a dar de alta
+ * @param userId			ID del usuario que sube el producto
+ * @param productCategory	Categoria del nuevo producto
+ * @param productPrice		Precio del nuevo producto
+ * @param lista				Lista de productos
+ */
 void new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
 	tItemL elemento;
 
@@ -131,6 +141,14 @@ void new(tProductId productId, tUserId userId, tProductCategory productCategory,
 	}
 }
 
+/**
+ * Da de baja un producto
+ *
+ * @param productId	Producto a dar de baja
+ * @param lista		Lista de productos
+ * @pre
+ * @post
+ */
 void delete(tProductId productId, tList* lista) {
 	// TODO Faced unha funcion categoryToString/getCategoryName?
 	tPosL posicion = findItem(productId, *lista);
@@ -145,6 +163,16 @@ void delete(tProductId productId, tList* lista) {
 	deleteAtPosition(posicion, lista);
 }
 
+/**
+ * Realiza una puja por un determinado producto
+ *
+ * @param productId	Producto por el cual se va a pujar
+ * @param bidder	ID del usuario que hace la puja
+ * @param puja		Precio de la puja
+ * @param lista		Lista de productos
+ * @pre
+ * @post
+ */
 void bid(tProductId productId, tUserId bidder, tProductPrice puja, tList* lista) {
 	tPosL posicion = findItem(productId, *lista);
 	tItemL producto;
@@ -170,38 +198,11 @@ void bid(tProductId productId, tUserId bidder, tProductPrice puja, tList* lista)
 		   producto.productCategory == 0 ? "book" : "painting", producto.productPrice, producto.bidCounter);
 }
 
-/*
-void stats(tList* lista) {
-	tPosL pos;
-	tItemL item;
-	int contadorLibros = 0, contadorPinturas = 0;
-	float sumaPrecioLibros = 0, sumaPrecioPinturas = 0; // TODO Nombre das variables demasiado largo?
-
-	if (!isEmptyList(*lista)) {
-		pos = first(*lista);
-		while (pos != LNULL) {
-			item = getItem(pos, *lista);
-			if(item.productCategory == 0) { // Libro
-				contadorLibros++;
-				sumaPrecioLibros += item.productPrice;
-			} else { // Pintura
-				contadorPinturas++;
-				sumaPrecioPinturas += item.productPrice;
-			}
-			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
-
-			pos = next(pos, *lista);
-		}
-		// TODO Deberia de gardar nunha variable a media?
-		// Average
-		printf("\nCategory  Products    Price  Average\n"); // Cabecera
-		printf("Book      %8d %8.2f %8.2f\n", contadorLibros, sumaPrecioLibros, contadorLibros == 0 ? 0 : sumaPrecioLibros/(float)contadorLibros);
-		printf("Painting  %8d %8.2f %8.2f\n", contadorPinturas, sumaPrecioPinturas, contadorPinturas == 0 ? 0 : sumaPrecioPinturas/(float)contadorPinturas);
-	} else {
-		printf("+ Error: Stats not possible\n");
-	}
-}*/ // Stats sin arrays
-
+/**
+ * Imprime un listado de los productos actuales y sus datos
+ *
+ * @param lista Lista de productos
+ */
 void stats(tList* lista) {
 	tPosL pos;
 	tItemL item;
@@ -231,3 +232,34 @@ void stats(tList* lista) {
 		printf("+ Error: Stats not possible\n");
 	}
 }
+
+/*
+void stats(tList* lista) {
+	tPosL pos;
+	tItemL item;
+	int contadorLibros = 0, contadorPinturas = 0;
+	float sumaPrecioLibros = 0, sumaPrecioPinturas = 0;
+
+	if (!isEmptyList(*lista)) {
+		pos = first(*lista);
+		while (pos != LNULL) {
+			item = getItem(pos, *lista);
+			if(item.productCategory == 0) { // Libro
+				contadorLibros++;
+				sumaPrecioLibros += item.productPrice;
+			} else { // Pintura
+				contadorPinturas++;
+				sumaPrecioPinturas += item.productPrice;
+			}
+			printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId, item.seller, item.productCategory == 0 ? "book" : "painting", item.productPrice, item.bidCounter);
+
+			pos = next(pos, *lista);
+		}
+		// Average
+		printf("\nCategory  Products    Price  Average\n"); // Cabecera
+		printf("Book      %8d %8.2f %8.2f\n", contadorLibros, sumaPrecioLibros, contadorLibros == 0 ? 0 : sumaPrecioLibros/(float)contadorLibros);
+		printf("Painting  %8d %8.2f %8.2f\n", contadorPinturas, sumaPrecioPinturas, contadorPinturas == 0 ? 0 : sumaPrecioPinturas/(float)contadorPinturas);
+	} else {
+		printf("+ Error: Stats not possible\n");
+	}
+}*/ // Stats sin arrays

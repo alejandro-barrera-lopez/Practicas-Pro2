@@ -12,6 +12,9 @@
 
 #include "types.h"
 
+#include <stdbool.h> // Para utilizar el tipo 'bool'
+#include <string.h>  // Por strcmp()
+
 #define LIST_SIZE_LIMIT 25
 #define LNULL -1
 
@@ -43,5 +46,7 @@ tItemL getItem (tPosL, tList);
 void updateItem (tItemL, tPosL, tList*);
 
 tPosL findItem (tProductId, tList);
+
+void deleteList(tList*);
 
 #endif

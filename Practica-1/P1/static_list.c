@@ -81,3 +81,7 @@ tPosL findItem (tProductId producto, tList lista) {
     }
     return LNULL;
 }
+
+void deleteList (tList* lista) {
+	lista->lastPos = LNULL;
+}

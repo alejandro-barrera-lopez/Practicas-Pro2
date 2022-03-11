@@ -114,3 +114,14 @@ tPosL findItem (tProductId d, tList L)
 	}
 	return p;
 }
+
+// TODO Reescribir man, porque foi copiado do ano pasado
+void deleteList (tList* lista) {
+	tPosL posicion;
+
+	while(*lista != LNULL) {
+		posicion = *lista;
+		*lista = (*lista)->siguiente;
+		free(posicion);
+	}
+}

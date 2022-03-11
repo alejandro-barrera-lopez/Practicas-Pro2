@@ -11,7 +11,9 @@
 #define DYNAMIC_LIST_H
 
 #include "types.h"
-#include <stdlib.h> // TODO include aqui ou no .c?
+#include <stdlib.h>		// Por malloc() y free()
+#include <stdbool.h>	// Para utilizar el tipo 'bool'
+#include <string.h>		// Por strcmp()
 
 #define LIST_SIZE_LIMIT 25
 #define LNULL NULL
@@ -43,9 +45,10 @@ void deleteAtPosition (tPosL, tList*);
 
 tItemL getItem (tPosL, tList);
 
-// TODO updateItem tList con puntero ou sin puntero???
 void updateItem (tItemL, tPosL, tList*);
 
 tPosL findItem (tProductId, tList);
+
+void deleteList(tList* L);
 
 #endif

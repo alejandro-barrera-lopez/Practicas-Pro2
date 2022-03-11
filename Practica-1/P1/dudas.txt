@@ -1,3 +1,7 @@
-1. Donde declarar as funcions?
-2. Donde declarar a lista? Fixeno en readTasks()
-3. No new, pode ser que se introduza unha categoria incorrecta?
+1. Hai que comentar as precondicions do main(), readTasks() e processComand()?
+
+-------------------------------------------------------------------
+
+1. Donde declarar as funcions? Da igual
+2. Donde declarar a lista? readTasks()
+3. No new, pode ser que se introduza unha categoria incorrecta? Non
