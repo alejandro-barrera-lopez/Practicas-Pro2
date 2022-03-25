@@ -4,7 +4,7 @@
  * AUTHOR 1: Alejandro Barrera López LOGIN 1: alejandro.barrera
  * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira LOGIN 2: a.dolzdelcastellar1
  * GROUP: 4.4
- * DATE: 08 / 03 / 22
+ * DATE: 25 / 03 / 22
  */
 
 #ifndef STATIC_LIST_H

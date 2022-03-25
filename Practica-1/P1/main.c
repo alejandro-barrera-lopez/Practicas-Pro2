@@ -4,7 +4,7 @@
  * AUTHOR 1: Alejandro Barrera López LOGIN 1: alejandro.barrera
  * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira LOGIN 2: a.dolzdelcastellar1
  * GROUP: 4.4
- * DATE: ** / ** / **
+ * DATE: 25 / 03 / 22
  */
 
 #include <stdio.h>
@@ -80,6 +80,17 @@ void imprimirInfoProducto (tItemL);
  */
 float calcularMedia (float, unsigned int);
 
+
+/**
+ * Procesa un comando formado por una línea de texto del archivo de texto correspondiente
+ * @param commandNumber Contador de los comandos introducidos, se refiere al número de comando, en un String
+ * @param command Letra correspondiente al comando
+ * @param param1 Primer parámetro del comando
+ * @param param2 Segundo parámetro del comando
+ * @param param3 Tercer parámetro del comando
+ * @param param4 Cuarto parámetro del comando
+ * @param lista Lista de productos
+ */
 void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList* lista) {
 
 	printf("********************\n");
@@ -112,8 +123,14 @@ void processCommand(char *commandNumber, char command, char *param1, char *param
 	}
 }
 
+/**
+ * Lee las órdenes del programa desde un archivo de texto
+ * @param filename Nombre del archivo por el que se leerán las órdenes
+ */
 void readTasks(char *filename) {
+	// Define la lista
 	tList lista;
+	// Inicializa la lista
 	createEmptyList(&lista);
 
 	FILE *f = NULL;
@@ -141,9 +158,16 @@ void readTasks(char *filename) {
 	} else {
 		printf("Cannot open file %s.\n", filename);
 	}
+	// Borra la lista y libera la memoria que ocupa
 	deleteList(&lista);
 }
 
+/**
+ * Es el procedimiento principal del programa
+ * @param nargs Número de argumentos introducidos por consola
+ * @param args Array que contiene los argumentos introducidos por consola
+ * @return Código de ejecución del programa
+ */
 int main(int nargs, char **args) {
 	char *file_name = "new.txt";
 
@@ -160,13 +184,12 @@ int main(int nargs, char **args) {
 	return 0;
 }
 
-/**
- * Devuelve un string con el nombre del valor del enum introducido
- * @param productCategory enum introducido
- * @return
- */
 char* pCategoryToString (tProductCategory productCategory) {
-	return productCategory == 0 ? "book" : "painting";
+	if(productCategory == book) { // Si la categoría es libro, devuelve un string "book"
+		return "book";
+	} else { // Sino, devuelve "painting"
+		return "painting";
+	}
 }
 
 float calcularMedia (float suma, unsigned int n){
@@ -179,107 +202,106 @@ float calcularMedia (float suma, unsigned int n){
 }
 
 void new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
-	tItemL producto;
+	tItemL producto; // Define una variable tItemL para posteriormente almacenar el nuevo producto
 
+	// Si el producto ya está en la lista, no se puede volver a insertar, por lo que se imprime un mensaje de error
 	if(findItem(productId, *lista) != LNULL) {
 		printf("+ Error: New not possible\n");
 		return;
 	}
 
+	// Se copian los valores indicados para el producto
 	strcpy(producto.productId, productId);
 	strcpy(producto.seller, userId);
 	producto.productCategory = productCategory;
 	producto.productPrice = productPrice;
-	producto.bidCounter = 0;
+	producto.bidCounter = 0; // Y se inicializa el contador de pujas en 0
 
-	if(insertItem(producto, LNULL, lista)) {
+	if(insertItem(producto, LNULL, lista)) { // Si el producto se insertó correctamente en la lista
+		// se imprime la información respectiva a la correcta ejecución de la función
 		printf("* New: product %s seller %s category %s price %.2f\n",
 			   productId, userId, pCategoryToString(producto.productCategory), productPrice);
-	} else {
+	} else { // Si el producto no se insertó correctamente, imprime un mensaje de error
 		printf("+ Error: New not possible\n");
 	}
 }
 
-
 void delete(tProductId productId, tList* lista) {
+	tItemL producto; // Define una variable tItemL para posteriormente almacenar el nuevo producto
+	// Se define una variable de tipo tPosL para almacenar la posición del producto buscado en la lista
 	tPosL posicion = findItem(productId, *lista);
-	tItemL producto;
-	if(posicion == LNULL) {
-		printf("+ Error: Delete not possible\n");
+	if(posicion == LNULL) { // Si la posición es nula, significa que no existe en la lista,
+		printf("+ Error: Delete not possible\n"); // por lo que se imprime un mensaje de error
 		return;
 	}
+	// Se asigna a 'producto' el valor del producto a borrar en la lista, para imprimir su información
+	// y borrarlo posteriormente
 	producto = getItem(posicion, *lista);
+	// Imprime la información respectiva a la correcta ejecución de la función
 	printf("* Delete: product %s seller %s category %s price %.2f bids %d\n", producto.productId, producto.seller,
 		   pCategoryToString(producto.productCategory), producto.productPrice, producto.bidCounter);
+	// Finalmente, borra el producto de la lista
 	deleteAtPosition(posicion, lista);
 }
 
-
 void bid(tProductId productId, tUserId bidder, tProductPrice puja, tList* lista) {
+	tItemL producto; // Define una variable de tipo tItemL para posteriormente almacenar el producto por el cual pujar
+	// Se define una variable tPosL y se almacena en ella la posición del producto buscado en la lista
 	tPosL posicion = findItem(productId, *lista);
-	tItemL producto;
-	if(posicion == LNULL) { // TODO Poñer posicion != LNULL e deixar as precondicions para o final? Delete igual
-		printf("+ Error: Bid not possible\n");
-		return;
-	}
-	producto = getItem(posicion, *lista);
-	if(strcmp(producto.seller, bidder) == 0) { // Si el vendedor es el mismo usuario que el bidder
-		printf("+ Error: Bid not possible\n");
-		return;
-	}
-	if(puja <= producto.productPrice) {
-		printf("+ Error: Bid not possible\n");
-		return;
-	}
-	producto.productPrice = puja;
-	producto.bidCounter++;
-
-	updateItem(producto, posicion, lista);
-
-	printf("* Bid: product %s seller %s category %s price %.2f bids %d\n", producto.productId, producto.seller,
-		   pCategoryToString(producto.productCategory), producto.productPrice, producto.bidCounter);
+	if(posicion != LNULL) { // Si la posición no es nula, el producto existe en la lista
+		producto = getItem(posicion, *lista); // Se almacena el producto en 'producto' desde la lista
+		if(strcmp(producto.seller, bidder) != 0) { // Si el vendedor es un usuario distinto al pujador
+			if(puja > producto.productPrice) { // Si el precio de puja es mayor que el anterior precio del producto
+				producto.productPrice = puja; // El nuevo precio será el de la puja
+				producto.bidCounter++; // Se aumenta el contador de pujas del producto
+				updateItem(producto, posicion, lista); // Actualiza el producto en la lista, con sus nuevos valores
+				// Imprime la información correspondiente al correcto funcionamiento del programa
+				printf("* Bid: product %s seller %s category %s price %.2f bids %d\n", producto.productId, producto.seller,
+					   pCategoryToString(producto.productCategory), producto.productPrice, producto.bidCounter);
+				// Termina la función
+				return;
+			}
+		}
+	} // Si no se han cumplido las tres anteriores condiciones, imprime un mensaje de error
+	printf("+ Error: Bid not possible\n");
 }
 
-void imprimirInfoProducto (tItemL item) {
+void imprimirInfoProducto (tItemL item) { // Imprime la información del producto 'item'
 	printf("Product %s seller %s category %s price %.2f bids %d\n", item.productId,
 		   item.seller, pCategoryToString(item.productCategory), item.productPrice, item.bidCounter);
 }
 
 void imprimirEstadisticas (unsigned int contador[2], float sumaPrecios[2]) {
 	printf("\nCategory  Products    Price  Average\n"); // Cabecera
-	printf("Book      %8d %8.2f %8.2f\n",
+	printf("Book      %8d %8.2f %8.2f\n", // Imprime las estadísticas de los libros
 		   contador[0], sumaPrecios[0], calcularMedia(sumaPrecios[0], contador[0]));
-	printf("Painting  %8d %8.2f %8.2f\n",
+	printf("Painting  %8d %8.2f %8.2f\n", // Imprime las estadísticas de los cuadros de pintura
 		   contador[1], sumaPrecios[1], calcularMedia(sumaPrecios[1], contador[1]));
 }
 
-/**
- * Imprime un listado de los productos actuales y sus datos
- * @param lista Lista de productos
- */
 void stats(tList* lista) {
-	tPosL pos;
-	tItemL item;
-	unsigned int contador[2] = {0, 0};
-	// contador[0] -> Contador de libros
-	// contador[1] -> Contador de pinturas
-	float sumaPrecios[2] = {0, 0};
-	// sumaPrecios[0] -> Suma de los precios de los libros
-	// sumaPrecios[1] -> Suma de los precios de las pinturas
+	tPosL pos; // Inicializa una variable de tipo tPosL para almacenar la posición del elemento a buscar
+	tItemL item; // Inicializa una variable de tipo tItemL para almacenar el elemento a buscar
+	unsigned int contador[2] = {0, 0}; /* Declara e inicializa a 0 un contador para libros, y otro para pinturas
+	contador[0] -> Contador de libros
+	contador[1] -> Contador de pinturas */
+	float sumaPrecios[2] = {0, 0}; /* Declara e inicializa a 0 un contador para la suma de precios de libros,
+	y otro para pinturas
+	umaPrecios[0] -> Suma de los precios de los libros
+	sumaPrecios[1] -> Suma de los precios de las pinturas */
 
-	if (!isEmptyList(*lista)) {
-		pos = first(*lista);
-		while (pos != LNULL) {
-			item = getItem(pos, *lista);
-			contador[item.productCategory]++;
-			sumaPrecios[item.productCategory] += item.productPrice;
-			imprimirInfoProducto(item);
-
-			pos = next(pos, *lista);
+	if (!isEmptyList(*lista)) { // Si la lista no está vacía
+		pos = first(*lista); // Se inicializa 'pos' con el valor de la posición inicial de la lista
+		while (pos != LNULL) { // Este bucle recorre la lista desde la posición inicial hasta la final
+			item = getItem(pos, *lista); // Se asignan a 'item' los valores del elemento buscado en la lista
+			contador[item.productCategory]++; // Se aumenta el contador de libros/pinturas
+			sumaPrecios[item.productCategory] += item.productPrice; // Se suma el precio del libro/pintura al sumador
+			imprimirInfoProducto(item); // Imprime la información individual del producto
+			pos = next(pos, *lista); // Pasa a la siguiente posición de la lista
 		}
-
-		imprimirEstadisticas(contador, sumaPrecios);
-	} else {
+		imprimirEstadisticas(contador, sumaPrecios); /* Imprime las estadísticas de todos los productos de la lista,
+														segregados en libros y pinturas */
+	} else { // La lista no está vacía, por lo que se imprime un mensaje de error
 		printf("+ Error: Stats not possible\n");
 	}
 }
