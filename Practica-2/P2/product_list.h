@@ -1,9 +1,9 @@
 /*
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
- * AUTHOR 1: ***************************** LOGIN 1: **********
- * AUTHOR 2: ***************************** LOGIN 2: **********
- * GROUP: *.*
+ * AUTHOR 1: Alejandro Barrera López 			 	LOGIN 1: alejandro.barrera
+ * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira 	LOGIN 2: a.dolzdelcastellar1
+ * GROUP: 4.4
  * DATE: ** / ** / **
  */
 
@@ -11,12 +11,21 @@
 #define PRODUCT_LIST_H
 
 #include "types.h"
+#include "bid_stack.h"
 #include <stdlib.h>		// Por malloc() y free()
 #include <stdbool.h>	// Para utilizar el tipo 'bool'
 #include <string.h>		// Por strcmp()
 
-#define LIST_SIZE_LIMIT 25
 #define LNULL NULL
+
+typedef struct { // Datos de un elemento de la lista de productos
+	tUserId seller;
+	tProductId productId;
+	tProductCategory productCategory;
+	tProductPrice productPrice;
+	tBidCounter bidCounter;
+	tStack bidStack;
+} tItemL;
 
 typedef struct tNode* tPosL;
 
@@ -79,16 +88,15 @@ tPosL next(tPosL, tList);
 tPosL previous(tPosL, tList);
 
 /**
- * Añade un elemento a la lista en la posicion indicada, o al final si la posicion es nula
+ * Añade un elemento a la lista de forma ordenada por el campo productId
  * @param elemento Elemento a añadir a la lista
- * @param posicion Posicion en la que añadir el elemento a la lista
  * @param lista Lista
  * @return Lista con el elemento insertado
  * @return True si se ha conseguido insertar, false en caso contrario
  * @pre La posicion a introducir es valida o nula
  * @pos Las posiciones anteriores a la del elemento insertado pueden haber variado
  */
-bool insertItem (tItemL, tPosL, tList*);
+bool insertItem (tItemL, tList*);
 
 /**
  * Elimina de la lista un elemento con cierta posicion
@@ -105,7 +113,10 @@ void deleteAtPosition (tPosL, tList*);
  * @param posicion Posicion del elemento buscado
  * @param lista Lista donde realizar la busqueda
  * @return Elemento en la posicion indicada de la lista
- * @pre La posicion a introducir es valida
+ * @pre La posicion a introducir es valida (TODO) y el producto en
+ * 		dicha posicion tiene una pila de pujas vacia
+ * @pos (TODO)Las posiciones de los elementos de la lista posteriores
+ * 		a la de la posicion eliminada pueden haber variado
  */
 tItemL getItem (tPosL, tList);
 

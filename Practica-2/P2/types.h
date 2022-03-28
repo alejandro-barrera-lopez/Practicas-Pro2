@@ -1,7 +1,6 @@
 #ifndef PRO2_2022_P2_TYPES_H
 #define PRO2_2022_P2_TYPES_H
 
-
 #define NAME_LENGTH_LIMIT 10
 
 
@@ -14,14 +13,5 @@ typedef enum {book, painting} tProductCategory;
 typedef float tProductPrice;
 
 typedef int tBidCounter;
-
-typedef struct tItemL {
-	tUserId seller;
-	tProductId productId;
-	tProductCategory productCategory;
-	tProductPrice productPrice;
-	tBidCounter bidCounter;
-} tItemL;
-
 
 #endif //PRO2_2022_P2_TYPES_H
