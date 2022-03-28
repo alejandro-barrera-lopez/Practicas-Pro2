@@ -30,7 +30,8 @@
 * @param lista				Lista de productos
 * @return True si se ha realizado correctamente, false en caso contrario
 */
-bool new (tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista);
+bool new (tProductId productId, tUserId userId, tProductCategory productCategory,
+		  tProductPrice productPrice, tList* lista);
 
 /**
  * Da de baja un producto. Para ello, comprueba si el producto existe y, en dicho caso,
@@ -126,7 +127,7 @@ void deleteStack (tStack stack);
 
 /**
  * Procesa un comando formado por una línea de texto del archivo de texto correspondiente
- * @param commandNumber Contador de los comandos introducidos, se refiere al número de comando, en un String
+ * @param commandNumber String con el número de comando introducido, en un String
  * @param command 		Letra correspondiente al comando
  * @param param1 		Primer parámetro del comando
  * @param param2 		Segundo parámetro del comando
@@ -134,9 +135,10 @@ void deleteStack (tStack stack);
  * @param param4 		Cuarto parámetro del comando
  * @param lista 		Lista de productos
  */
-void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3, char *param4, tList* lista) {
+void processCommand(char *commandNumber, char command, char *param1, char *param2, char *param3,
+					char *param4, tList* lista) {
 
-	bool ok = false; // Booleano creado para detectar si se produjo un error en la ejecuci�n del comando
+	bool ok = false; // Booleano creado para detectar si se hubo un error al ejecutar del comando
 	printf("********************\n");
 	switch (command) {
         case 'N': // New
@@ -328,19 +330,20 @@ bool new(tProductId productId, tUserId userId, tProductCategory productCategory,
 }
 
 bool delete(tProductId productId, bool imprimirInfo, tList* lista) { // TODO Eliminar todas las pujas existentes
-	tItemL producto; // Define una variable tItemL para posteriormente almacenar el nuevo producto
-	// Se define una variable de tipo tPosL para almacenar la posición del producto buscado en la lista
+	tItemL producto; // Define una variable tItemL para despu�s almacenar el nuevo producto
+	// Define una variable de tipo tPosL para almacenar la posición del producto buscado en la lista
 	tPosL posicion = findItem(productId, *lista);
 	if(posicion == LNULL) { // Si la posición es nula, significa que no existe en la lista,
 		return false; // Por lo que se devuelve falso
 	}
-	// Se asigna a 'producto' el valor del producto a borrar en la lista, para imprimir su información
+	// Asigna a 'producto' el valor del producto a borrar en la lista, para imprimir su información
 	// y borrarlo posteriormente
 	producto = getItem(posicion, *lista);
 	if(imprimirInfo) {
 		// Si as� se indica, imprime la información respectiva a la correcta ejecución de la función
-		printf("* Delete: product %s seller %s category %s price %.2f bids %d\n", producto.productId, producto.seller,
-			   pCategoryToString(producto.productCategory), producto.productPrice, producto.bidCounter);
+		printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
+			   producto.productId, producto.seller,pCategoryToString(producto.productCategory),
+			   producto.productPrice, producto.bidCounter);
 	}
 	deleteStack(producto.bidStack); // Borra las pujas existentes
 	// Finalmente, borra el producto de la lista y devuelve verdadero
@@ -350,9 +353,10 @@ bool delete(tProductId productId, bool imprimirInfo, tList* lista) { // TODO Eli
 
 // TODO Arreglar este hadouken?
 bool bid(tProductId productId, tUserId bidder, tProductPrice precioPuja, tList* lista) {
-	tItemL producto; // Define una variable de tipo tItemL para posteriormente almacenar el producto por el cual pujar
+	// Define una variable de tipo tItemL para posteriormente almacenar el producto por el cual pujar
+	tItemL producto;
 	tItemS puja;
-	// Se define una variable tPosL y se almacena en ella la posición del producto buscado en la lista
+	// Define una variable tPosL y se almacena en ella la posición del producto buscado en la lista
 	tPosL posicion = findItem(productId, *lista);
 	if(posicion != LNULL) { // Si la posición no es nula, el producto existe en la lista
 		producto = getItem(posicion, *lista); // Se almacena el producto en 'producto' desde la lista
@@ -364,8 +368,9 @@ bool bid(tProductId productId, tUserId bidder, tProductPrice precioPuja, tList* 
 				push(puja, &producto.bidStack);
 				updateItem(producto, posicion, lista); // Actualiza el producto en la lista, con sus nuevos valores
 				// Imprime la información correspondiente al correcto funcionamiento del programa
-				printf("* Bid: product %s bidder %s category %s price %.2f bids %d\n", productId, bidder,
-					   pCategoryToString(producto.productCategory), precioPuja, producto.bidCounter);
+				printf("* Bid: product %s bidder %s category %s price %.2f bids %d\n",
+					   productId, bidder, pCategoryToString(producto.productCategory),
+					   precioPuja, producto.bidCounter);
 				return true; // Devuelve verdadero, ya que se ha ejecutado correctamente la funci�n
 			}
 		}
@@ -430,7 +435,7 @@ bool stats(tList* lista) {
 	y otro para pinturas
 	sumaPrecios[0] -> Suma de los precios de los libros
 	sumaPrecios[1] -> Suma de los precios de las pinturas */
-	
+
 	mejorPuja.bidCounter = 0;
 
 	if (!isEmptyList(*lista)) { // Si la lista no está vacía
