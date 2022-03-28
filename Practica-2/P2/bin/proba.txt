@@ -1,0 +1,14 @@
+01 N 1 user1  painting 150.00
+02 N 2 user1  painting 120.00
+03 N 3 user2 book  100.00
+04 N 4 user2  book      20.00
+05 N 5 user2  book      39.50
+06 N 6 user2  painting  95.00
+07 N 7 user2 book 288.00
+08 S
+09 B 1 user2a  200.00
+10 S
+11 B 7 user1 300.00
+12 S
+13 R
+14 S
