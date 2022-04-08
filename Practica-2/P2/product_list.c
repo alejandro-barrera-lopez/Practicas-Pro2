@@ -49,7 +49,7 @@ bool createNode (tPosL* posicion) {
 	return *posicion != LNULL; // Devuelve true si se asignó correctamente, o false si no
 }
 
-bool insertItem (tItemL producto, tList* lista) { // TODO Razonalo e facelo eu
+bool insertItem (tItemL producto, tList* lista) { // TODO Razonalo e facelo eu, comentar
 	tPosL pos1, pos2; // Declara dos variables de tipo tPosL para almacenar posiciones en la lista
 
 	if(!createNode(&pos1)) { // Si la memoria no se pudo asignar correctamente, devuelve falso

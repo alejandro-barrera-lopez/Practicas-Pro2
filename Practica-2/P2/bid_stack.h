@@ -17,12 +17,12 @@
 
 typedef int tPosS;
 
-typedef struct { // Datos de un elemento de la pila de productos
+typedef struct { // Datos de un elemento de la pila de pujas de un producto
 	tUserId bidder;
 	tProductPrice productPrice;
 } tItemS;
 
-typedef struct {
+typedef struct { // Define el TAD que almacenar� las pujas de un producto
 	tItemS vector[BID_MAX_SIZE]; // Vector en el que se guardan los elementos de la lista
 	tPosS final; // Posicion de la cima / ultima posicion del vector
 } tStack;
@@ -66,5 +66,12 @@ tItemS peek (tStack pila);
  * @return True si la pila esta vacia; false en caso contrario
  */
 bool isEmptyStack (tStack pila);
+
+/**
+ * Elimina el contenido de una pila
+ * @param stack Pila a vaciar
+ * @return Pila vaciada TODO ???
+ */
+void deleteStack (tStack stack);
 
 #endif

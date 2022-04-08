@@ -117,14 +117,6 @@ void imprimirInfoProducto (tItemL item);
  * @return Media aritmetica
  */
 float calcularMedia (float, unsigned int);
-
-/**
- * Elimina el contenido de una pila
- * @param stack Pila a vaciar
- * @return Pila vaciada TODO ???
- */
-void deleteStack (tStack stack);
-
 /**
  * Procesa un comando formado por una línea de texto del archivo de texto correspondiente
  * @param commandNumber String con el número de comando introducido, en un String
@@ -293,23 +285,13 @@ void printError (char command) {
 	printf("+ Error: %s not possible\n", commandName);
 }
 
-void deleteStack (tStack stack) {
-	while(!isEmptyStack(stack)) {
-		pop(&stack);
-	}
-}
-
 bool new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
 	tItemL producto; // Define una variable tItemL para posteriormente almacenar el nuevo producto
-	tStack bidStack; // Define una pila de pujas, de cara a inicializarla para el nuevo producto
 
 	// Si el producto ya está en la lista, no se puede volver a insertar, por lo que se devuelve falso
 	if(findItem(productId, *lista) != LNULL) {
 		return false;
 	}
-
-	// Se inicializa la pila de pujas del producto
-	createEmptyStack(&bidStack);
 
 	// Se copian los valores indicados para el producto
 	strcpy(producto.productId, productId);
@@ -317,7 +299,7 @@ bool new(tProductId productId, tUserId userId, tProductCategory productCategory,
 	producto.productCategory = productCategory;
 	producto.productPrice = productPrice;
 	producto.bidCounter = 0; // Se inicializa su contador de pujas en 0
-	producto.bidStack = bidStack; // Se establece una pila vacia de pujas para el producto
+	createEmptyStack(&producto.bidStack); // Se inicializa la pila vacia del producto
 
 	if(insertItem(producto, lista)) { // Si el producto se insertó correctamente en la lista
 		// se imprime la información respectiva a la correcta ejecución de la función
@@ -329,7 +311,7 @@ bool new(tProductId productId, tUserId userId, tProductCategory productCategory,
 	return true; // Se devuelve verdadero, ya que la ejecuci�n del c�digo fue correcta
 }
 
-bool delete(tProductId productId, bool imprimirInfo, tList* lista) { // TODO Eliminar todas las pujas existentes
+bool delete(tProductId productId, bool imprimirInfo, tList* lista) {
 	tItemL producto; // Define una variable tItemL para despu�s almacenar el nuevo producto
 	// Define una variable de tipo tPosL para almacenar la posición del producto buscado en la lista
 	tPosL posicion = findItem(productId, *lista);
