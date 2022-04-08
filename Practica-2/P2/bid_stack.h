@@ -1,10 +1,10 @@
 /*
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
- * AUTHOR 1: ***************************** LOGIN 1: **********
- * AUTHOR 2: ***************************** LOGIN 2: **********
- * GROUP: *.*
- * DATE: ** / ** / **
+ * AUTHOR 1: Alejandro Barrera López 			 	LOGIN 1: alejandro.barrera
+ * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira 	LOGIN 2: a.dolzdelcastellar1
+ * GROUP: 4.4
+ * DATE: 08 / 04 / 22
  */
 
 #ifndef BID_STACK_H
