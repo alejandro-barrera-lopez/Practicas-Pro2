@@ -49,7 +49,40 @@ bool createNode (tPosL* posicion) {
 	return *posicion != LNULL; // Devuelve true si se asignó correctamente, o false si no
 }
 
-bool insertItem (tItemL producto, tList* lista) { // TODO Razonalo e facelo eu, comentar
+tPosL findPosition(tItemL i, tList L){
+    tPosL p;
+    p=L;
+    while(p->siguiente!=LNULL && strcmp(i.productId,p->siguiente->dato.productId)>0)
+        p=p->siguiente;
+    return p;
+}
+
+bool insertItem(tItemL item, tList *L) {
+    tPosL p,aux;
+
+    if (!createNode(&p)) return false; //No hay suficiente espacio en memoria para insertar nuevos items.
+    else{
+        p->dato=item;
+        p->siguiente=LNULL;
+
+        if(*L==LNULL) //Si la lista está vacía, será el primer elemento de ella
+            *L=p;
+
+        else if (strcmp(item.productId,(*L)->dato.productId)<0){ //El elemento tiene que insertarse al principio de la lista
+            p->siguiente=*L;
+            *L=p;
+
+        }else{
+            aux=findPosition(item,*L);
+
+            p->siguiente=aux->siguiente;
+            aux->siguiente=p;
+        }
+    }
+    return true;
+}
+
+bool einsertItem (tItemL producto, tList* lista) { // TODO Razonalo, comentar
 	tPosL pos1, pos2; // Declara dos variables de tipo tPosL para almacenar posiciones en la lista
 
 	if(!createNode(&pos1)) { // Si la memoria no se pudo asignar correctamente, devuelve falso

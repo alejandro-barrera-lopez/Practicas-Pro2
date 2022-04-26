@@ -1,4 +1,4 @@
-/*
+    /*
  * TITLE: PROGRAMMING II LABS
  * SUBTITLE: Practical 2
  * AUTHOR 1: Alejandro Barrera López 			 	LOGIN 1: alejandro.barrera
@@ -15,9 +15,7 @@
 
 #define MAX_BUFFER 255
 
-// TODO Pensar en todas as referencias de punteros (de verdad fan falta os * e & ?)
 // TODO Comprobar que non se pasa dos 100/120 caracteres de ancho
-// TODO Preguntar se especificar as funciones arriba ou abaixo
 
 // Funciones principales del programa
 /**
@@ -37,11 +35,11 @@ bool new (tProductId productId, tUserId userId, tProductCategory productCategory
  * Da de baja un producto. Para ello, comprueba si el producto existe y, en dicho caso,
  * procede a borrarlo
  * @param productId		Producto a dar de baja
- * @param imprimirInfo	Booleano que indica si se imprimir� informaci�n o no, para reutilizar la funci�n
+ * @param verbose   	Booleano que indica si se imprimir información o no, para reutilizar la función en Remove()
  * @param lista			Lista de productos
  * @return True si se ha realizado correctamente, false en caso contrario
  */
-bool delete (tProductId productId, bool imprimirInfo, tList* lista);
+bool delete (tProductId productId, bool verbose, tList* lista);
 
 /**
  * Intenta realizar una puja por un determinado producto. Para ello, comprueba si el producto
@@ -101,14 +99,14 @@ void printError (char command);
  * @param productCategory enum introducido
  * @return Nombre correspondiente al valor del enum introducido
  */
-char* pCategoryToString (tProductCategory productCategory);
+char* getCategoryName (tProductCategory productCategory);
 
 /**
  * Imprime por pantalla la informacion del producto introducido
  * @param item Producto a imprimir
  * @pre El producto no es nulo
  */
-void imprimirInfoProducto (tItemL item);
+void imprimirInfoProducto (tItemL prod);
 
 /**
  * Calcula la media aritmetica mediante dos parametros
@@ -237,7 +235,7 @@ int main(int nargs, char **args) {
     return 0;
 }
 
-char* pCategoryToString (tProductCategory productCategory) {
+char* getCategoryName (tProductCategory productCategory) {
 	if(productCategory == book) { // Si la categoría es libro, devuelve un string "book"
 		return "book";
 	} else { // Sino, devuelve "painting"
@@ -285,7 +283,31 @@ void printError (char command) {
 	printf("+ Error: %s not possible\n", commandName);
 }
 
+void imprimirInfo (tItemL p, char* comando, bool bidder, bool bids) {
+    if(bids) {
+
+    }
+    printf("* %s: product %s %s %s category %s price %.2f\n", comando, p.productId, bidder ? "bidder" : "seller",
+           bidder ? peek(p.bidStack).bidder : p.seller, p.productCategory == book ? "book" : "painting", p.productPrice);
+}
+
 bool new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
+    tItemL prod;
+    strcpy(prod.productId, productId);
+    strcpy(prod.seller, userId);
+    prod.productCategory = productCategory;
+    prod.productPrice = productPrice;
+    prod.bidCounter = 0;
+    createEmptyStack(&prod.bidStack);
+
+    if(findItem(productId, *lista) == LNULL && insertItem(prod, lista)) { // TODO Sería mellor inicializar o tItemL producto dentro do if, e comprobar con outro if o insertItem?
+        printf("* New: product %s seller %s category %s price %.2f\n", productId, userId, getCategoryName(prod.productCategory), productPrice);
+        return true;
+    }
+    return false;
+}
+
+/*bool new(tProductId productId, tUserId userId, tProductCategory productCategory, tProductPrice productPrice, tList* lista) {
 	tItemL producto; // Define una variable tItemL para posteriormente almacenar el nuevo producto
 
 	// Si el producto ya está en la lista, no se puede volver a insertar, por lo que se devuelve falso
@@ -304,14 +326,41 @@ bool new(tProductId productId, tUserId userId, tProductCategory productCategory,
 	if(insertItem(producto, lista)) { // Si el producto se insertó correctamente en la lista
 		// se imprime la información respectiva a la correcta ejecución de la función
 		printf("* New: product %s seller %s category %s price %.2f\n",
-			   productId, userId, pCategoryToString(producto.productCategory), productPrice);
+			   productId, userId, getCategoryName(producto.productCategory), productPrice);
 	} else { // Si el producto no se insertó correctamente, devuelve falso
 		return false;
 	}
 	return true; // Se devuelve verdadero, ya que la ejecuci�n del c�digo fue correcta
+}*/
+
+/**
+ * Elimina el contenido de una pila
+ * @param stack Pila a vaciar
+ * @return Pila vaciada TODO ???
+ */
+void deleteStack (tStack stack) {
+    while(!isEmptyStack(stack)) {
+        pop(&stack);
+    }
 }
 
-bool delete(tProductId productId, bool imprimirInfo, tList* lista) {
+bool delete(tProductId productId, bool verbose, tList* lista) {
+    tPosL pos = findItem(productId, *lista);
+    tItemL prod;
+    if(pos != LNULL) {
+        prod = getItem(pos, *lista);
+        if(verbose) {
+            printf("* Delete: product %s seller %s category %s price %.2f bids %d\n", prod.productId, prod.seller,
+                   getCategoryName(prod.productCategory), prod.productPrice, prod.bidCounter);
+        }
+        deleteStack(prod.bidStack);
+        deleteAtPosition(pos, lista);
+        return true;
+    }
+    return false;
+}
+
+/*bool delete(tProductId productId, bool imprimirInfo, tList* lista) {
 	tItemL producto; // Define una variable tItemL para despu�s almacenar el nuevo producto
 	// Define una variable de tipo tPosL para almacenar la posición del producto buscado en la lista
 	tPosL posicion = findItem(productId, *lista);
@@ -324,16 +373,37 @@ bool delete(tProductId productId, bool imprimirInfo, tList* lista) {
 	if(imprimirInfo) {
 		// Si as� se indica, imprime la información respectiva a la correcta ejecución de la función
 		printf("* Delete: product %s seller %s category %s price %.2f bids %d\n",
-			   producto.productId, producto.seller,pCategoryToString(producto.productCategory),
+			   producto.productId, producto.seller,getCategoryName(producto.productCategory),
 			   producto.productPrice, producto.bidCounter);
 	}
 	deleteStack(producto.bidStack); // Borra las pujas existentes
 	// Finalmente, borra el producto de la lista y devuelve verdadero
 	deleteAtPosition(posicion, lista);
 	return true;
+}*/
+
+bool bid(tProductId productId, tUserId bidder, tProductPrice precioPuja, tList* lista) {
+    tPosL pos;
+    tItemL prod;
+    tItemS puja;
+
+    if((pos = findItem(productId, *lista)) != LNULL) {
+        if(strcmp(bidder, (prod = getItem(pos, *lista)).seller) != 0 && precioPuja > prod.productPrice) {
+            strcpy(puja.bidder, bidder);
+            puja.productPrice = precioPuja;
+            if(push(puja, &prod.bidStack)) {
+                prod.bidCounter++;
+                updateItem(prod, pos, lista);
+                printf("* Bid: product %s bidder %s category %s price %.2f bids %d\n", prod.productId, bidder,
+                       getCategoryName(prod.productCategory), precioPuja, prod.bidCounter);
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-// TODO Arreglar este hadouken?
+/*// TODO Arreglar este hadouken?
 bool bid(tProductId productId, tUserId bidder, tProductPrice precioPuja, tList* lista) {
 	// Define una variable de tipo tItemL para posteriormente almacenar el producto por el cual pujar
 	tItemL producto;
@@ -342,35 +412,32 @@ bool bid(tProductId productId, tUserId bidder, tProductPrice precioPuja, tList* 
 	tPosL posicion = findItem(productId, *lista);
 	if(posicion != LNULL) { // Si la posición no es nula, el producto existe en la lista
 		producto = getItem(posicion, *lista); // Se almacena el producto en 'producto' desde la lista
-		if(strcmp(producto.seller, bidder) != 0) { // Si el vendedor es un usuario distinto al pujador
-			if(precioPuja > producto.productPrice) { // Si el precio de puja es mayor que el anterior precio del producto
+		if(strcmp(producto.seller, bidder) != 0 && precioPuja > producto.productPrice) {
+            // Si el vendedor es un usuario distinto al pujador y el precio de puja es mayor que e lanterior precio de producto
 				strcpy(puja.bidder, bidder);
 				puja.productPrice = precioPuja;
 				producto.bidCounter++; // Se aumenta el contador de pujas del producto
-				push(puja, &producto.bidStack);
+				push(puja, &producto.bidStack); // TODO Se se enche a pila?
 				updateItem(producto, posicion, lista); // Actualiza el producto en la lista, con sus nuevos valores
 				// Imprime la información correspondiente al correcto funcionamiento del programa
 				printf("* Bid: product %s bidder %s category %s price %.2f bids %d\n",
-					   productId, bidder, pCategoryToString(producto.productCategory),
+					   productId, bidder, getCategoryName(producto.productCategory),
 					   precioPuja, producto.bidCounter);
 				return true; // Devuelve verdadero, ya que se ha ejecutado correctamente la funci�n
-			}
-		}
+        }
 	} // Si no se han cumplido las tres anteriores condiciones, devuelve falso
 	return false;
-}
+}*/
 
-void imprimirInfoProducto (tItemL item) { // Imprime la información del producto 'item'
+void imprimirInfoProducto (tItemL prod) { // Imprime la información del producto 'item'
 	// TODO Buscar alternativa a if
-	if(item.bidCounter == 0) {
-		printf("Product %s seller %s category %s price %.2f. No bids\n", item.productId,
-			   item.seller, pCategoryToString(item.productCategory), item.productPrice);
-	} else {
-		tItemS puja = peek(item.bidStack);
-		printf("Product %s seller %s category %s price %.2f bids %d top bidder %s\n",
-			   item.productId, item.seller, pCategoryToString(item.productCategory),
-			   item.productPrice, item.bidCounter, puja.bidder);
-	}
+    printf("Product %s seller %s category %s price %.2f", prod.productId,
+           prod.seller, getCategoryName(prod.productCategory), prod.productPrice);
+    if(prod.bidCounter == 0) {
+        printf(". No bids\n");
+    } else {
+        printf(" bids %d top bidder %s\n", prod.bidCounter, peek(prod.bidStack).bidder);
+    }
 
 }
 
@@ -392,7 +459,7 @@ void imprimirTopBid (tItemL producto) {
 		float precioProducto = producto.productPrice;
 
 		printf("Top bid: Product %s seller %s category %s price %.2f bidder %s top price %.2f increase %.2f%%\n",
-			   producto.productId, producto.seller, pCategoryToString(producto.productCategory),
+			   producto.productId, producto.seller, getCategoryName(producto.productCategory),
 			   precioProducto, puja.bidder, precioPuja, (precioPuja - precioProducto)/precioProducto * 100);
 	}
 }
@@ -407,8 +474,33 @@ float incremento (tItemL producto) {
 }
 
 bool stats(tList* lista) {
+    tPosL pos;
+    tItemL prod;
+    float totalPrecios[2] = {0, 0}; // Posición 0 -> book. Posición 1 -> painting
+    unsigned int numProductos[2] = {0, 0}; // Posición 0 -> book. Posición 1 -> painting
+    tItemL topBid;
+    topBid.bidCounter = 0;
+
+    if(!isEmptyList(*lista)) {
+        for(pos = first(*lista); pos != LNULL; pos = next(pos, *lista)) {
+            prod = getItem(pos, *lista);
+            totalPrecios[prod.productCategory] += prod.productPrice;
+            numProductos[prod.productCategory]++;
+            if(prod.bidCounter > 0 && incremento(prod) > incremento(topBid)) {
+                topBid = prod;
+            }
+            imprimirInfoProducto(prod);
+        }
+        imprimirEstadisticas(numProductos, totalPrecios);
+        imprimirTopBid(topBid);
+        return true;
+    }
+    return false;
+}
+
+bool estats(tList* lista) {
 	tPosL pos; // Inicializa una variable de tipo tPosL para almacenar la posición del elemento a buscar
-	tItemL item; // Inicializa una variable de tipo tItemL para almacenar el elemento a buscar
+	tItemL prod; // Inicializa una variable de tipo tItemL para almacenar el elemento a buscar
 	tItemL mejorPuja; // Producto con el mayor incremento porcentual entre su mejor puja y su precio original
 	unsigned int contador[2] = {0, 0}; /* Declara e inicializa a 0 un contador para libros, y otro para pinturas
 	contador[0] -> Contador de libros
@@ -417,25 +509,24 @@ bool stats(tList* lista) {
 	y otro para pinturas
 	sumaPrecios[0] -> Suma de los precios de los libros
 	sumaPrecios[1] -> Suma de los precios de las pinturas */
-
 	mejorPuja.bidCounter = 0;
 
 	if (!isEmptyList(*lista)) { // Si la lista no está vacía
 		pos = first(*lista); // Se inicializa 'pos' con el valor de la posición inicial de la lista
 		// Cambiar while por for
 		while (pos != LNULL) { // Este bucle recorre la lista desde la posición inicial hasta la final
-			item = getItem(pos, *lista); // Se asignan a 'item' los valores del elemento buscado en la lista
+            prod = getItem(pos, *lista); // Se asignan a 'item' los valores del elemento buscado en la lista
 
-			imprimirInfoProducto(item); // Imprime la información individual del producto
+			imprimirInfoProducto(prod); // Imprime la información individual del producto
 
-			if(item.bidCounter > 0) {
-				if (incremento (item) > incremento(mejorPuja)) {
-					mejorPuja = item;
+			if(prod.bidCounter > 0) {
+				if (incremento (prod) > incremento(mejorPuja)) {
+					mejorPuja = prod;
 				}
 			}
 
-			contador[item.productCategory]++; // Se aumenta el contador de libros/pinturas
-			sumaPrecios[item.productCategory] += item.productPrice; // Se suma el precio del libro/pintura al sumador
+			contador[prod.productCategory]++; // Se aumenta el contador de libros/pinturas
+			sumaPrecios[prod.productCategory] += prod.productPrice; // Se suma el precio del libro/pintura al sumador
 
 			pos = next(pos, *lista); // Pasa a la siguiente posición de la lista
 		}
@@ -450,6 +541,25 @@ bool stats(tList* lista) {
 }
 
 bool award (tProductId productId, tList* lista) {
+    tPosL pos;
+    tItemL prod;
+    tItemS pujaMax;
+
+    if((pos = findItem(productId, *lista)) != LNULL) {
+        prod = getItem(pos, *lista);
+        if(!isEmptyStack(prod.bidStack)) {
+            pujaMax = peek(prod.bidStack);
+            printf("* Award: product %s bidder %s category %s price %.2f\n", productId, pujaMax.bidder,
+                   prod.productCategory == book ? "book" : "painting", pujaMax.productPrice);
+            deleteStack(prod.bidStack);
+            deleteAtPosition(pos, lista);
+            return true;
+        }
+    }
+    return false;
+}
+
+/*bool award (tProductId productId, tList* lista) {
 	tPosL pos = findItem(productId, *lista);
 	if(pos != LNULL) { // Si hay un productId con el mismo ID en la lista
 		tItemL producto = getItem(pos, *lista);
@@ -457,19 +567,40 @@ bool award (tProductId productId, tList* lista) {
 			tItemS pujaGanadora = peek(producto.bidStack);
 			// Imprime informaci�n sobre el comando realizado
 			printf("* Award: product %s bidder %s category %s price %.2f\n", productId,
-				   pujaGanadora.bidder, pCategoryToString(producto.productCategory),
+				   pujaGanadora.bidder, getCategoryName(producto.productCategory),
 				   pujaGanadora.productPrice);
 			delete(productId, false, lista); // Se borra el producto de la lista
 			return true;
 		}
 	}
 	return false; // Si no se cumplieron las condiciones anteriores, devuelve falso
-}
+}*/
 
-bool withdraw (tProductId productId, tUserId seller, tList* lista) {
+bool withdraw (tProductId productId, tUserId bidder, tList* lista) {
+    tPosL pos = findItem(productId, *lista);
+    tItemL prod;
+    tItemS puja;
+    if(pos != LNULL) {
+        prod = getItem(pos, *lista);
+        if(prod.bidCounter > 0) {
+            puja = peek(prod.bidStack);
+            if(strcmp(bidder, puja.bidder) == 0) {
+                printf("* Withdraw: product %s bidder %s category %s price %.2f bids %d\n", productId, bidder,
+                       getCategoryName(prod.productCategory), puja.productPrice, prod.bidCounter);
+                pop(&prod.bidStack);
+                prod.bidCounter--;
+                updateItem(prod, pos, lista);
+                return true;
+            }
+        }
+    }
+    return false;
+    }
+
+bool weithdraw (tProductId productId, tUserId seller, tList* lista) {
 	tPosL pos = findItem(productId, *lista);
 
-	if (pos != LNULL) { /* Si el producto existe en la lista (TODO facer funcion para comprobar se est� na lista un producto?)*/
+	if (pos != LNULL) { /* Si el producto existe en la lista (TODO facer funcion para comprobar se está na lista un producto?)*/
 		tItemL producto = getItem(pos, *lista);
 		// Si la pila de pujas no est� vac�a y el nombre del vendedor coincide con el introducido,
 		// se sigue la ejecuci�n
@@ -478,7 +609,7 @@ bool withdraw (tProductId productId, tUserId seller, tList* lista) {
 
 			// Se imprime la informaci�n de la operaci�n
 			printf("* Withdraw: product %s bidder %s category %s price %.2f bids %d\n", productId,
-				   puja.bidder, pCategoryToString(producto.productCategory), puja.productPrice,
+				   puja.bidder, getCategoryName(producto.productCategory), puja.productPrice,
 				   producto.bidCounter);
 			pop(&producto.bidStack); // Elimina la ultima puja
 			producto.bidCounter--; // Decrementa el contador de pujas
@@ -490,11 +621,28 @@ bool withdraw (tProductId productId, tUserId seller, tList* lista) {
 }
 
 bool Remove (tList* lista) {
+    tPosL pos;
+    tItemL prod;
+    int removedProducts = 0;
+
+    for(pos = first(*lista); pos != LNULL; pos = next(pos, *lista)) {
+        prod = getItem(pos, *lista);
+        if(prod.bidCounter == 0) {
+            printf("Removing product %s seller %s category %s price %.2f bids %d\n", prod.productId, prod.seller,
+                   getCategoryName(prod.productCategory)s, prod.productPrice, prod.bidCounter);
+            deleteAtPosition(pos, lista);
+            removedProducts++;
+        }
+    }
+    return removedProducts > 0;
+}
+
+bool Reemove (tList* lista) {
 	tItemL producto;
 	tPosL pos;
 	bool productRemoved = false;
 
-	// TODO Solo borra un producto sin pujas, ten que borralos todos
+	// TODO: Solo borra un producto sin pujas, ten que borralos todos
 	if(!isEmptyList(*lista)) {
 		pos = first(*lista);
 		while(pos != LNULL) { // Mientras la lista no est� vac�a
@@ -504,7 +652,7 @@ bool Remove (tList* lista) {
 				delete(producto.productId, false, lista); // Lo elimina de la lista
 				// Y se imprime la informacion del proceso
 				printf("Removing product %s seller %s category %s price %.2f bids %d\n",
-					   producto.productId, producto.seller, pCategoryToString(producto.productCategory),
+					   producto.productId, producto.seller, getCategoryName(producto.productCategory),
 					   producto.productPrice, producto.bidCounter);
 				productRemoved = true;
 				pos = first(*lista);

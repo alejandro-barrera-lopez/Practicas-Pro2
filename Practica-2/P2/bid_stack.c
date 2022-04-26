@@ -33,9 +33,3 @@ tItemS peek (tStack pila) {
 bool isEmptyStack (tStack pila) {
 	return pila.final == SNULL; // La lista esta vacia si, y solo si, la ultima posicion es nula (0)
 }
-
-void deleteStack (tStack stack) {
-	while(!isEmptyStack(stack)) { // Mientras la pila no est� vac�a
-		pop(&stack); // Elimina su elemento cima
-	}
-}
