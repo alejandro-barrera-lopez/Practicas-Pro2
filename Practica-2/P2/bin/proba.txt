@@ -6,9 +6,13 @@
 06 N 6 user2  painting  95.00
 07 N 7 user2 book 288.00
 08 S
-09 B 1 user2a  200.00
-10 S
-11 B 7 user1 300.00
+09 B 1 user2 180.00
+10 B 2 user2 185.00
+11 B 5 user1 300.00
+11 B 3 user1 200.00
+12 B 4 user3 200.00
+13 B 6 user3 100.00
+14 B 7 user3 300.00
 12 S
 13 R
 14 S

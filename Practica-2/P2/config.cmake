@@ -1,2 +1,2 @@
 #Choose the input file for main (new.txt, bid.txt, delete.txt, award.txt...)
-set(input remove.txt)
+set(input proba.txt)

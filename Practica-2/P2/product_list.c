@@ -4,7 +4,7 @@
  * AUTHOR 1: Alejandro Barrera López 			 	LOGIN 1: alejandro.barrera
  * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira 	LOGIN 2: a.dolzdelcastellar1
  * GROUP: 4.4
- * DATE: 08 / 04 / 22
+ * DATE: 29 / 04 / 22
  */
 
 #include "product_list.h"
@@ -22,79 +22,51 @@ tPosL first (tList lista) {
 }
 
 tPosL last (tList lista) {
-	tPosL posicion = lista; // Define e inicializa una variable tPosL con la posición del primer elemento de la lista
+	tPosL pos = lista; // Define e inicializa una variable tPosL con la posición del primer elemento de la lista
 	// Recorre la lista hasta el final
-	while (posicion->siguiente != LNULL) {
-		posicion = posicion->siguiente;
+	while (pos->siguiente != LNULL) {
+        pos = pos->siguiente;
 	}
-	return posicion; // Devuelve la posición final de la lista
+	return pos; // Devuelve la posición final de la lista
 }
 
-tPosL next (tPosL posicion, tList lista) {
-	return posicion->siguiente;
+tPosL next (tPosL pos, tList lista) {
+	return pos->siguiente;
 }
 
-tPosL previous (tPosL posicion, tList lista) { // Ben
+tPosL previous (tPosL pos, tList lista) { // Ben
 	tPosL aux; // Declara una variable de tipo tPosL
-	if(posicion == lista) { // Si es la primera posicion devuelve nulo
+	if(pos == lista) { // Si es la primera posición devuelve nulo
 		return LNULL;
 	}
 	// Recorre la lista desde el principio hasta llegar al elemento anterior al dado
-	for(aux = lista; aux->siguiente != posicion; aux = aux->siguiente);
+	for(aux = lista; aux->siguiente != pos; aux = aux->siguiente);
 	return aux; // Devuelve el elemento anterior al dado
 }
 
-bool createNode (tPosL* posicion) {
-	*posicion = malloc(sizeof(struct tNode)); // Reserva memoria en el sistema para una posición de la lista
-	return *posicion != LNULL; // Devuelve true si se asignó correctamente, o false si no
+bool createNode (tPosL* pos) {
+	*pos = malloc(sizeof(struct tNode)); // Reserva memoria en el sistema para una posición de la lista
+	return *pos != LNULL; // Devuelve true si se asignó correctamente, o false si no
 }
 
-tPosL findPosition(tItemL i, tList L){
-    tPosL p;
-    p=L;
-    while(p->siguiente!=LNULL && strcmp(i.productId,p->siguiente->dato.productId)>0)
-        p=p->siguiente;
-    return p;
-}
-
-bool insertItem(tItemL item, tList *L) {
-    tPosL p,aux;
-
-    if (!createNode(&p)) return false; //No hay suficiente espacio en memoria para insertar nuevos items.
-    else{
-        p->dato=item;
-        p->siguiente=LNULL;
-
-        if(*L==LNULL) //Si la lista está vacía, será el primer elemento de ella
-            *L=p;
-
-        else if (strcmp(item.productId,(*L)->dato.productId)<0){ //El elemento tiene que insertarse al principio de la lista
-            p->siguiente=*L;
-            *L=p;
-
-        }else{
-            aux=findPosition(item,*L);
-
-            p->siguiente=aux->siguiente;
-            aux->siguiente=p;
-        }
-    }
-    return true;
-}
-
-bool einsertItem (tItemL producto, tList* lista) { // TODO Razonalo, comentar
+bool insertItem (tItemL producto, tList* lista) {
 	tPosL pos1, pos2; // Declara dos variables de tipo tPosL para almacenar posiciones en la lista
 
 	if(!createNode(&pos1)) { // Si la memoria no se pudo asignar correctamente, devuelve falso
 		return false;
 	} else {
+        // Se copian los datos de la nueva posición de la lista en 'pos1'
 		pos1->dato = producto;
 		pos1->siguiente = LNULL;
-		if(isEmptyList(*lista)) { // Si la lista esta vacia
-			*lista = pos1; // Se inserta el elemento en la primera posicion
+		if(isEmptyList(*lista)) { // Si la lista esta vacía
+			*lista = pos1; // Se inserta el elemento en la primera posición
 		} else if (strcmp(producto.productId, (*lista)->dato.productId) < 0) {
+            // Si el productId del producto a insertar es alfabéticamente menor al primer productId de la lista,
+            // se inserta el elemento en la primera posición de la lista
 			pos1->siguiente = *lista;
 			*lista = pos1;
+            /* Si no, se recorre la lista hasta alcanzar la posición alfabética adecuada para el nuevo producto,
+             * y se inserta en dicha posición */
 		} else {
 			pos2 = *lista;
 			while ((pos2->siguiente != LNULL) && (strcmp(pos2->siguiente->dato.productId, producto.productId) < 0)) {
@@ -107,10 +79,10 @@ bool einsertItem (tItemL producto, tList* lista) { // TODO Razonalo, comentar
 	return true;
 }
 
-void deleteAtPosition (tPosL posicion, tList* lista) { // TODO
+void deleteAtPosition (tPosL posicion, tList* lista) {
 	tPosL pos; // Declara una variable de tipo tPosL, para almacenar una posición en la lista
 	if(posicion == *lista) { // Si la posición introducida está al principio de la lista
-		*lista = (*lista)->siguiente; // Se cambia el inicio de la lista a la siguiente posición, eliminando así la primera
+		*lista = (*lista)->siguiente; // Cambia el inicio de la lista a la siguiente posición, eliminando así la primera
 	} else if (posicion->siguiente == LNULL) { // Si es el último elemento de la lista
 		for(pos = *lista; pos->siguiente != posicion; pos = pos->siguiente); // Recorre la lista hasta 'posicion'
 		pos->siguiente = LNULL; // Y pasa a nulo la posición dada, eliminando así su contenido de la lista
@@ -123,29 +95,18 @@ void deleteAtPosition (tPosL posicion, tList* lista) { // TODO
 	free(posicion);
 }
 
-tItemL getItem (tPosL posicion, tList lista) {
-	return posicion->dato; // Devuelve el elemento situado en la posición dada
+tItemL getItem (tPosL pos, tList lista) {
+	return pos->dato; // Devuelve el elemento situado en la posición dada
 }
 
-void updateItem (tItemL producto, tPosL posicion, tList* lista) {
-	posicion->dato = producto; // Actualiza el elemento situado en la posición indicada, sustituyéndolo por el introducido
+void updateItem (tItemL producto, tPosL pos, tList* lista) {
+    pos->dato = producto; // Actualiza el elemento situado en la posición indicada, sustituyéndolo por el introducido
 }
 
 tPosL findItem (tProductId producto, tList lista) {
 	tPosL pos = lista; // Define una variable de tipo tPosL y le asigna el valor de la lista
-	while((pos != LNULL) && strcmp(producto, pos->dato.productId) !=0 ) { // Mientras no se encuentre el elemento a buscar
+	while((pos != LNULL) && strcmp(producto, pos->dato.productId) !=0 ) { // Mientras no encuentre el elemento a buscar
 		pos = pos->siguiente; // Se pasa a la siguiente posición de la lista
 	} // Finalmente, devuelve la posición del item dado, o nulo si no se ha encontrado
 	return pos;
-}
-
-void deleteList (tList* lista) {
-	tPosL posicion; // Define una variable de tipo tPosL para almacenar una posición
-
-	while(*lista != LNULL) { // Mientras la lista no sea igual a nulo, es decir, mientras no esté vacía
-		// Se recorre cada elemento de la lista y se va liberando la memoria asignada a él
-		posicion = *lista;
-		*lista = (*lista)->siguiente;
-		free(posicion);
-	}
 }

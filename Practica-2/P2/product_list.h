@@ -4,7 +4,7 @@
  * AUTHOR 1: Alejandro Barrera López 			 	LOGIN 1: alejandro.barrera
  * AUTHOR 2: Álvaro Dolz del Castellar Castiñeira 	LOGIN 2: a.dolzdelcastellar1
  * GROUP: 4.4
- * DATE: 08 / 04 / 22
+ * DATE: 29 / 04 / 22
  */
 
 #ifndef PRODUCT_LIST_H
@@ -37,53 +37,53 @@ struct tNode {
 typedef tPosL tList;
 
 /**
- * Crea una lista vacia y la inicializa
- * @return Una lista vacia
+ * Crea una lista vacía y la inicializa
+ * @return Una lista vacía
  * @param lista Lista a comprobar
- * @pos La salida sin datos
+ * @post La salida sin datos
  */
 void createEmptyList (tList*);
 
 /**
- * Determina si la lista esta vacia
+ * Determina si la lista esta vacía
  * @param lista Lista a comprobar
- * @return True si la lista esta vacia, false en caso contrario
+ * @return True si la lista esta vacía, false en caso contrario
  */
 bool isEmptyList (tList);
 
 /**
- * Devuelve la posicion del primer elemento de la lista
+ * Devuelve la posición del primer elemento de la lista
  * @param  lista que contiene el elemento
- * @return Posicion del primer elemento
- * @pre La lista no esta vacia
+ * @return Posición del primer elemento
+ * @pre La lista no esta vacía
  */
 tPosL first (tList);
 
 /**
- * Devuelve la posicion del ultimo elemento de la lista
+ * Devuelve la posición del ultimo elemento de la lista
  * @param lista Lista que contiene el elemento
- * @return Posicion del primer elemento
- * @pre La lista no esta vacia
+ * @return Posición del primer elemento
+ * @pre La lista no esta vacía
  */
 tPosL last (tList);
 
 /**
- * Devuelve la posicion en la lista del elemento siguiente al actual
- * @param posicion Posicion actual
+ * Devuelve la posición en la lista del elemento siguiente al actual
+ * @param posicion Posición actual
  * @param lista Lista que contiene el elemento
- * @return Posicion del elemento siguiente, o nulo si es el ultimo
- * @pre La lista no esta vacia
- * @pre La posicion actual es una posicion valida de la lista
+ * @return Posición del elemento siguiente, o nulo si es el ultimo
+ * @pre La lista no esta vacía
+ * @pre La posición actual es una posición valida de la lista
  */
 tPosL next(tPosL, tList);
 
 /**
- * Devuelve la posicion en la lista del elemento anterior al actual
- * @param posicion Posicion actual
+ * Devuelve la posición en la lista del elemento anterior al actual
+ * @param posicion Posición actual
  * @param lista Lista que contiene el elemento
- * @return Posicion del elemento anterior, o nulo si es el primero
- * @pre La lista no esta vacia
- * @pre La posicion actual es una posicion valida de la lista
+ * @return Posición del elemento anterior, o nulo si es el primero
+ * @pre La lista no esta vacía
+ * @pre La posición actual es una posición valida de la lista
  */
 tPosL previous(tPosL, tList);
 
@@ -93,39 +93,37 @@ tPosL previous(tPosL, tList);
  * @param lista Lista
  * @return Lista con el elemento insertado
  * @return True si se ha conseguido insertar, false en caso contrario
- * @pre La posicion a introducir es valida o nula
- * @pos Las posiciones anteriores a la del elemento insertado pueden haber variado
+ * @pre La posición a introducir es valida o nula
+ * @post Las posiciones anteriores a la del elemento insertado pueden haber variado
  */
 bool insertItem (tItemL, tList*);
 
 /**
- * Elimina de la lista un elemento con cierta posicion
- * @param posicion Posicion del elemento a eliminar
+ * Elimina de la lista un elemento con cierta posición
+ * @param posicion Posición del elemento a eliminar
  * @param lista Lista de la que eliminar el elemento
  * @return Lista sin el elemento correspondiente
- * @pre La posicion a introducir es valida
- * @pos Las posiciones posteriores a la del elemento eliminado pueden haber variado
+ * @pre La posición a introducir es valida
+ * @post Las posiciones posteriores a la del elemento eliminado pueden haber variado
  */
 void deleteAtPosition (tPosL, tList*);
 
 /**
- * Devuelve el elemento en la posicion indicada de la lista
- * @param posicion Posicion del elemento buscado
- * @param lista Lista donde realizar la busqueda
- * @return Elemento en la posicion indicada de la lista
- * @pre La posicion a introducir es valida (TODO) y el producto en
- * 		dicha posicion tiene una pila de pujas vacia
- * @pos (TODO)Las posiciones de los elementos de la lista posteriores
- * 		a la de la posicion eliminada pueden haber variado
+ * Devuelve el elemento en la posición indicada de la lista
+ * @param posicion Posición del elemento buscado
+ * @param lista Lista donde realizar la búsqueda
+ * @return Elemento en la posición indicada de la lista
+ * @pre La posición a introducir es valida y el producto en dicha posición tiene una pila de pujas vacía
+ * @post Las posiciones de los elementos de la lista posteriores a la de la posición eliminada pueden haber variado
  */
 tItemL getItem (tPosL, tList);
 
 /**
  * Modifica el contenido de un elemento de la lista
  * @param elemento El nuevo elemento a modificar
- * @param posicion La posicion del elemento modificar
+ * @param posicion La posición del elemento modificar
  * @param lista Lista en la que modificar el elemento
- * @pre La posicion a introducir es valida
+ * @pre La posición a introducir es valida
  */
 void updateItem (tItemL, tPosL, tList*);
 
@@ -133,15 +131,8 @@ void updateItem (tItemL, tPosL, tList*);
  * Busca el primer elemento con cierto contenido en la lista
  * @param producto Elemento a buscar
  * @param lista Lista donde buscarlo
- * @return Posicion donde se encuentra el elemento buscado, o nulo si no se encuentra
+ * @return Posición donde se encuentra el elemento buscado, o nulo si no se encuentra
  */
 tPosL findItem (tProductId, tList);
-
-/**
- * Borra la lista, libera la memoria ocupada y restablece su tamaño y posicion a 0
- * @param lista Lista a borrar
- * @return La lista vacia
- */
-void deleteList(tList* L);
 
 #endif

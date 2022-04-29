@@ -80,7 +80,6 @@ void imprimirInfoProducto (tItemL);
  */
 float calcularMedia (float, unsigned int);
 
-
 /**
  * Procesa un comando formado por una línea de texto del archivo de texto correspondiente
  * @param commandNumber Contador de los comandos introducidos, se refiere al número de comando, en un String
